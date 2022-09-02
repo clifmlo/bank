@@ -11,20 +11,26 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import lombok.Builder;
+import lombok.NoArgsConstructor;    
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private String credit_account;
-    private String debit_account;
-    private BigDecimal transaction_amount;
+    private String creditAccount;
+    private String debitAccount;
+    private BigDecimal transactionAmount;
     @Enumerated(EnumType.STRING)
-    private TransactionStatus transaction_status;
+    private TransactionStatus transactionStatus;
     @CreationTimestamp
     private LocalDateTime date_received;
     private LocalDateTime date_processed;
