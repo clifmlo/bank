@@ -22,7 +22,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transaction implements Serializable {
+public class PaymentTransaction implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +31,7 @@ public class Transaction implements Serializable {
     private BigDecimal transactionAmount;
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
+    private String reference;
     @CreationTimestamp
     private LocalDateTime date_received;
     private LocalDateTime date_processed;

@@ -1,15 +1,16 @@
 package za.co.ebank.bank.service;
 
-import org.springframework.stereotype.Service;
-import za.co.ebank.bank.model.Deposit;
-import za.co.ebank.bank.model.Transaction;
-import za.co.ebank.bank.repo.TransactionRepo;
 import java.math.BigDecimal;
+import org.springframework.stereotype.Service;
+import za.co.ebank.bank.model.dto.Deposit;
+import za.co.ebank.bank.model.PaymentTransaction;
+import za.co.ebank.bank.repo.TransactionRepo;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import za.co.ebank.bank.model.BankAccount;
 import za.co.ebank.bank.model.TransactionStatus;
+import za.co.ebank.bank.model.BankAccountStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -23,17 +24,24 @@ public class TransactionService {
         this.bankAccountService = bankAccountService;
     }
 
-    public Transaction deposit(final Deposit deposit) {
-        BigDecimal currentBalance = bankAccountService.getAvailableBalance(deposit.getCreditAccount());
-        BigDecimal newBalance = currentBalance.add( deposit.getDepositAmount());
+    public PaymentTransaction deposit(final Deposit deposit) {
         BankAccount account = bankAccountService.findByAccountNumber(deposit.getCreditAccount());
-        account.setAvailableBalance(newBalance);
+        if (account.getStatus().equals(BankAccountStatus.INACTIVE) && isNotNullOrZero(deposit.getDepositAmount())) {
+            account.setStatus(BankAccountStatus.ACTIVE);
+        }
+        account.setAvailableBalance(account.getAvailableBalance().add(deposit.getDepositAmount()));
+        account.setLatestBalance(account.getLatestBalance().add(deposit.getDepositAmount()));
         bankAccountService.updateBankAccount(account);
         
         return createDepositTransactionEntry(deposit);
     }
     
-    public Transaction payAnotherAccount(final Transaction transaction) {                
+    private boolean isNotNullOrZero(final BigDecimal value) {
+        return value != null && !BigDecimal.ZERO.equals(value);
+    }
+    
+    
+    public PaymentTransaction payAnotherAccount(final PaymentTransaction transaction) {                
         BankAccount creditAccount = bankAccountService.findByAccountNumber(transaction.getCreditAccount());
         BankAccount debitAccount = bankAccountService.findByAccountNumber(transaction.getDebitAccount());
         
@@ -42,23 +50,15 @@ public class TransactionService {
         
         if (isSameClientAccounts(creditAccount, debitAccount)) {                     
             creditAccount.setAvailableBalance(creditAccount.getAvailableBalance().add(transaction.getTransactionAmount()));                       
+            creditAccount.setLatestBalance(creditAccount.getLatestBalance().add(transaction.getTransactionAmount()));                       
+            debitAccount.setLatestBalance(debitAccount.getLatestBalance().subtract(transaction.getTransactionAmount()));
             bankAccountService.updateBankAccount(debitAccount);
             bankAccountService.updateBankAccount(creditAccount);            
            
             transaction.setTransactionStatus(TransactionStatus.PROCESSED);
             transaction.setDate_processed(LocalDateTime.now());             
             transactionRepo.save(transaction);
-        } else {
-            //DEBIT
-            //available has been reduced above
-            // dont touch latest 
-            //therefore dont do nothing to debit
-            
-            
-            //CREDIT
-            //dont touch available yet
-            //increase latest balance(Pending incoming)
-            //set transaction to PENDING
+        } else {            
             creditAccount.setLatestBalance(creditAccount.getLatestBalance().add(transaction.getTransactionAmount())); 
             transaction.setTransactionStatus(TransactionStatus.PENDING);                        
             transactionRepo.save(transaction);                      
@@ -69,23 +69,24 @@ public class TransactionService {
         return transaction;
     }
 
-    private Transaction createDepositTransactionEntry(final Deposit deposit) {
-        Transaction transaction = Transaction.builder()
+    private PaymentTransaction createDepositTransactionEntry(final Deposit deposit) {
+        PaymentTransaction transaction = PaymentTransaction.builder()
                 .creditAccount(deposit.getCreditAccount())
                 .transactionAmount(deposit.getDepositAmount())
                 .date_received(LocalDateTime.now())
                 .date_processed(LocalDateTime.now())
                 .transactionStatus(TransactionStatus.PROCESSED)
+                .reference(deposit.getReference())
                 .build();
         
         return transactionRepo.save(transaction);
     }
     
-    public Transaction updateTransaction(final Transaction transaction) {      
+    public PaymentTransaction updateTransaction(final PaymentTransaction transaction) {      
         return transactionRepo.save(transaction);
     }
     
-    public List<Transaction> findByAccountNumber(final String accountNumber) {
+    public List<PaymentTransaction> findByAccountNumber(final String accountNumber) {
         return transactionRepo.findByAccountNumber(accountNumber);
     }
     
@@ -94,32 +95,29 @@ public class TransactionService {
     }
    
     public void processPendingTransactions() {
-        List<Transaction> pendingTransactions = transactionRepo.findByStatus(TransactionStatus.PENDING);
-        log.info("Pending transaction count: {}", pendingTransactions.size());
+        List<PaymentTransaction> pendingTransactions = transactionRepo.findByStatus(TransactionStatus.PENDING);
+        log.info("Pending transaction count: {}", pendingTransactions.size());         
         pendingTransactions.forEach(transaction ->processTransaction(transaction));
     }
     
-    private void processTransaction(final Transaction transaction) {
+    private void processTransaction(final PaymentTransaction transaction) {
         if (is10minAndOlder(transaction)) {
            log.info("processing transaction with Id: {}", transaction.getId());
            updateAccounts(transaction);
         }
     }
     
-    private boolean is10minAndOlder(final Transaction transaction) {
+    private boolean is10minAndOlder(final PaymentTransaction transaction) {
         return Duration.between(transaction.getDate_received(), LocalDateTime.now()).toMinutes() > 10;
     }
     
-    private void updateAccounts(final Transaction transaction) {
+    private void updateAccounts(final PaymentTransaction transaction) {
         BankAccount creditAccount = bankAccountService.findByAccountNumber(transaction.getCreditAccount());
         BankAccount debitAccount = bankAccountService.findByAccountNumber(transaction.getDebitAccount());         
-        //Updated debit acount balances
-        //reduce latest by transaction amount, no changes to available balance.
-        //After the above operation latest must match available
+        //Updated debit acount balances       
         debitAccount.setLatestBalance(debitAccount.getLatestBalance().subtract(transaction.getTransactionAmount()));
         
         //Updated credit acount balances
-        //increase available by transaction amount
         creditAccount.setAvailableBalance(creditAccount.getAvailableBalance().add(transaction.getTransactionAmount()));
         
         //update the transaction

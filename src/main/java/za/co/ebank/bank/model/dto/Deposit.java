@@ -1,4 +1,4 @@
-package za.co.ebank.bank.model;
+package za.co.ebank.bank.model.dto;
 
 import lombok.Data;
 import java.math.BigDecimal;
@@ -7,4 +7,5 @@ import java.math.BigDecimal;
 public class Deposit {
     private String creditAccount;
     private BigDecimal depositAmount;
+    private String reference;
 }

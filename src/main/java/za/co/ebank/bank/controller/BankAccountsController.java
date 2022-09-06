@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import za.co.ebank.bank.model.BankAccount;
+import za.co.ebank.bank.model.dto.CreateBankAccount;
+import za.co.ebank.bank.model.dto.UserBankAccount;
 import za.co.ebank.bank.service.BankAccountService;
 
 @RequestMapping("/bank-account")
@@ -22,9 +24,8 @@ public class BankAccountsController {
     }
 
     @PostMapping("create")
-    public ResponseEntity createBankAccount(@RequestBody final BankAccount bankAccount) {
-        BankAccount createdBankAccount = bankAccountService.createBankAccount(bankAccount);
-        
+    public ResponseEntity createBankAccount(@RequestBody final CreateBankAccount bankAccount) {
+        BankAccount createdBankAccount = bankAccountService.createBankAccount(bankAccount);        
         return createdBankAccount.getId() > 0 ? new ResponseEntity(createdBankAccount, HttpStatus.CREATED) : new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
@@ -37,5 +38,14 @@ public class BankAccountsController {
         }
         
         return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+    
+    @PostMapping("/link-user")
+    public ResponseEntity linkUser(@RequestBody final UserBankAccount userBankAccount) {
+        BankAccount bankAccount = bankAccountService.findByAccountNumber(userBankAccount.getAccountNumber());
+        bankAccount.setUser_account_id(userBankAccount.getUserId());
+        bankAccountService.updateBankAccount(bankAccount);
+        
+        return new ResponseEntity(bankAccount, HttpStatus.OK);            
     }
 }

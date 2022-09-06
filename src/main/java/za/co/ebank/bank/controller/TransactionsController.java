@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import za.co.ebank.bank.model.Deposit;
+import za.co.ebank.bank.model.dto.Deposit;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import za.co.ebank.bank.model.Transaction;
+import za.co.ebank.bank.model.PaymentTransaction;
 
 @RequestMapping("/transaction")
 @RestController
@@ -28,7 +28,7 @@ public class TransactionsController {
     }
     
     @PostMapping("pay")
-    public ResponseEntity payAnotherAccount(@RequestBody final Transaction transaction) {
+    public ResponseEntity payAnotherAccount(@RequestBody final PaymentTransaction transaction) {
         return new ResponseEntity(transactionService.payAnotherAccount(transaction), HttpStatus.OK);
     }
     
