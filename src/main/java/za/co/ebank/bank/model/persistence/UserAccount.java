@@ -36,15 +36,15 @@ public class UserAccount implements Serializable {
     private Long id;
     
     @NotNull
-    @NotBlank(message = "Name is mandatory")
+    @NotBlank
     private String name;
     
     @NotNull
-    @NotBlank(message = "Surname is mandatory")
+    @NotBlank
     private String surname;
     
     @NotNull
-    @NotBlank(message = "Id number is mandatory")
+    @NotBlank
     private String idNumber;
     
     @NotNull
@@ -52,17 +52,17 @@ public class UserAccount implements Serializable {
     private String email;
     
     @NotNull
-    @NotBlank(message = "Contact number is mandatory")
+    @NotBlank
     private String contactNumber;
     
     @ValidPassword
     @NotNull
-    @NotBlank(message = "Password is mandatory.")
+    @NotBlank
     private String password;
    
     @ValidPassword
     @NotNull
-    @NotBlank(message = "Confirm password is mandatory.")
+    @NotBlank
     @Transient
     private String confirmPassword;
     
