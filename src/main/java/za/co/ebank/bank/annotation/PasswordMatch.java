@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import za.co.ebank.bank.util.PasswordMatchValidator;
+import za.co.ebank.bank.validation.PasswordMatchValidator;
 
 /**
  *

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import za.co.ebank.bank.exception.UserExistsException;
 import za.co.ebank.bank.model.ApiResponse;
 import za.co.ebank.bank.model.persistence.UserAccount;
 import za.co.ebank.bank.service.UserAccountService;
@@ -24,10 +25,13 @@ public class UserAccountController {
     }
 
     @PostMapping("register")
-    public ResponseEntity createUserAccount(@Valid @RequestBody final UserAccount userAccount) {
-        UserAccount createdUserAccount = userAccountService.createUserAccount(userAccount);
-        
-        return new ResponseEntity<>(new ApiResponse(createdUserAccount, "success", false), HttpStatus.OK);
+    public ResponseEntity createUserAccount(@Valid @RequestBody final UserAccount userAccount) {        
+        try{
+            UserAccount createdUserAccount = userAccountService.createUserAccount(userAccount);        
+            return new ResponseEntity(new ApiResponse(createdUserAccount, "success", false), HttpStatus.OK);
+        } catch (UserExistsException ex){
+            return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.OK);
+        }
     }
     
     @GetMapping("{id}")

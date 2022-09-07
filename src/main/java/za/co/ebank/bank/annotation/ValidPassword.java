@@ -5,7 +5,7 @@ import javax.validation.Constraint;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import za.co.ebank.bank.util.PasswordConstraintValidator;
+import za.co.ebank.bank.validation.PasswordConstraintValidator;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.ElementType.FIELD;

@@ -1,4 +1,4 @@
-package za.co.ebank.bank.util;
+package za.co.ebank.bank.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
