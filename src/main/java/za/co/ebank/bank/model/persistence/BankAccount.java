@@ -1,4 +1,4 @@
-package za.co.ebank.bank.model;
+package za.co.ebank.bank.model.persistence;
 
 import lombok.Data;
 
@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import za.co.ebank.bank.model.AccountType;
+import za.co.ebank.bank.model.BankAccountStatus;
 
 @Builder
 @NoArgsConstructor

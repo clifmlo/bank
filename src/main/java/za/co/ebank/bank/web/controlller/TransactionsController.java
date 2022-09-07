@@ -1,4 +1,4 @@
-package za.co.ebank.bank.controller;
+package za.co.ebank.bank.web.controlller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.ebank.bank.service.TransactionService;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import za.co.ebank.bank.model.dto.Deposit;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import za.co.ebank.bank.model.PaymentTransaction;
+import za.co.ebank.bank.model.persistence.PaymentTransaction;
 
 @RequestMapping("/transaction")
 @RestController

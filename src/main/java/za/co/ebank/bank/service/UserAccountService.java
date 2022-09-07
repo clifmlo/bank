@@ -2,7 +2,7 @@ package za.co.ebank.bank.service;
 
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-import za.co.ebank.bank.model.UserAccount;
+import za.co.ebank.bank.model.persistence.UserAccount;
 import za.co.ebank.bank.repo.UserAccountRepo;
 
 @Service
@@ -14,6 +14,7 @@ public class UserAccountService {
     }
 
     public UserAccount createUserAccount(final UserAccount userAccount) {
+        
         //create temp password
 
         //encrypt passwords

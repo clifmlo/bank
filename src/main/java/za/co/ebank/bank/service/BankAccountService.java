@@ -1,6 +1,6 @@
 package za.co.ebank.bank.service;
 
-import za.co.ebank.bank.model.BankAccount;
+import za.co.ebank.bank.model.persistence.BankAccount;
 import za.co.ebank.bank.repo.BankAccountRepo;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;

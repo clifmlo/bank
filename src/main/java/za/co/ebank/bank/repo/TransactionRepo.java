@@ -2,7 +2,7 @@ package za.co.ebank.bank.repo;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import za.co.ebank.bank.model.PaymentTransaction;
+import za.co.ebank.bank.model.persistence.PaymentTransaction;
 import org.springframework.data.jpa.repository.Query;
 import za.co.ebank.bank.model.TransactionStatus;
 

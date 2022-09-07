@@ -1,6 +1,7 @@
-package za.co.ebank.bank.controller;
+package za.co.ebank.bank.web.controlller;
 
 import java.util.Optional;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import za.co.ebank.bank.model.UserAccount;
+import za.co.ebank.bank.model.ApiResponse;
+import za.co.ebank.bank.model.persistence.UserAccount;
 import za.co.ebank.bank.service.UserAccountService;
 
 @RequestMapping("/user")
@@ -17,16 +19,15 @@ import za.co.ebank.bank.service.UserAccountService;
 public class UserAccountController {
     private final UserAccountService userAccountService;
 
-
     public UserAccountController(final UserAccountService userAccountService) {
-      this.userAccountService = userAccountService;
+       this.userAccountService = userAccountService;
     }
 
-    @PostMapping("create")
-    public ResponseEntity createUserAccount(@RequestBody final UserAccount userAccount) {
+    @PostMapping("register")
+    public ResponseEntity createUserAccount(@Valid @RequestBody final UserAccount userAccount) {
         UserAccount createdUserAccount = userAccountService.createUserAccount(userAccount);
         
-        return createdUserAccount.getId() > 0 ? new ResponseEntity(createdUserAccount, HttpStatus.CREATED) : new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ApiResponse(createdUserAccount, "success", false), HttpStatus.OK);
     }
     
     @GetMapping("{id}")

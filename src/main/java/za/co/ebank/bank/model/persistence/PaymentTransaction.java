@@ -1,4 +1,4 @@
-package za.co.ebank.bank.model;
+package za.co.ebank.bank.model.persistence;
 
 import java.io.Serializable;
 import lombok.Data;
@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import za.co.ebank.bank.model.TransactionStatus;
 
 @Entity
 @Data
