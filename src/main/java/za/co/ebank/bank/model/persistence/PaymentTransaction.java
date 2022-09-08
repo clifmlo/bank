@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.NoArgsConstructor;    
 import lombok.AllArgsConstructor;

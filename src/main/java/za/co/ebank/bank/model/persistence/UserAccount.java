@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,7 @@ public class UserAccount implements Serializable {
     @NotBlank
     private String idNumber;
     
+    @Column(unique=true)
     @NotNull
     @Email(message = "Email is not valid.", regexp ="^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
     private String email;
@@ -69,6 +71,12 @@ public class UserAccount implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_account_id")
     private List<BankAccount> bankAccounts;
+    
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
     
     @CreationTimestamp
     private LocalDateTime date_created;
