@@ -6,6 +6,6 @@ import java.math.BigDecimal;
 @Data
 public class Deposit {
     private String creditAccount;
-    private BigDecimal depositAmount;
+    private BigDecimal amount;
     private String reference;
 }

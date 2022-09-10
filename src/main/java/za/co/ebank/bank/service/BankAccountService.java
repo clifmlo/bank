@@ -18,19 +18,20 @@ public class BankAccountService {
 
     public BankAccount createBankAccount(final CreateBankAccount bankAccount) {
       
-        if (bankAccount.getDeposit().getDepositAmount() == null) {
-            bankAccount.getDeposit().setDepositAmount(BigDecimal.ZERO);
+        if (bankAccount.getDeposit().getAmount() == null) {
+            bankAccount.getDeposit().setAmount(BigDecimal.ZERO);
         }
      
         BankAccount account = BankAccount.builder()
                                .accountNumber(generateAccountNumber())
+                               .user_account_id(bankAccount.getUserId())
                                .accountType(bankAccount.getAccountType())
-                               .availableBalance(bankAccount.getDeposit().getDepositAmount())
-                               .latestBalance(bankAccount.getDeposit().getDepositAmount())
+                               .availableBalance(bankAccount.getDeposit().getAmount())
+                               .latestBalance(bankAccount.getDeposit().getAmount())
                                .date_created(LocalDateTime.now())
                                .build();
         
-        if (isNotNullOrZero(bankAccount.getDeposit().getDepositAmount())) {
+        if (isNotNullOrZero(bankAccount.getDeposit().getAmount())) {
             account.setStatus(BankAccountStatus.ACTIVE); 
         } else {
             account.setStatus(BankAccountStatus.INACTIVE); 
@@ -46,7 +47,7 @@ public class BankAccountService {
     private String generateAccountNumber() {
         
     //TODO generate proper account numbers
-        return "123456789";
+        return "783456789";
     }
     
     public BankAccount updateBankAccount(final BankAccount bankAccount) {

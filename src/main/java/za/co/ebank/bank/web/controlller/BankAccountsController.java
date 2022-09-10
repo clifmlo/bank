@@ -1,5 +1,6 @@
 package za.co.ebank.bank.web.controlller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +16,7 @@ import za.co.ebank.bank.model.dto.CreateBankAccount;
 import za.co.ebank.bank.model.dto.UserBankAccount;
 import za.co.ebank.bank.service.BankAccountService;
 
+@Slf4j
 @RequestMapping("/api/v1/bank-account")
 @RestController
 @CrossOrigin(origins = {"http://localhost:4200/"}, methods = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST, RequestMethod.OPTIONS})
@@ -28,6 +30,7 @@ public class BankAccountsController {
 
     @PostMapping("create")
     public ResponseEntity createBankAccount(@RequestBody final CreateBankAccount bankAccount) {
+        log.info(bankAccount.toString());
         BankAccount createdBankAccount = bankAccountService.createBankAccount(bankAccount);        
         return createdBankAccount.getId() > 0 ? new ResponseEntity(createdBankAccount, HttpStatus.CREATED) : new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
