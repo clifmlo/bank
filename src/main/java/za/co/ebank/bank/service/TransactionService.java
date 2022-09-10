@@ -25,7 +25,7 @@ public class TransactionService {
     }
 
     public PaymentTransaction deposit(final Deposit deposit) {
-        BankAccount account = bankAccountService.findByAccountNumber(deposit.getCreditAccount());
+        BankAccount account = bankAccountService.findByAccountNumber(deposit.getAccountNumber());
         if (account.getStatus().equals(BankAccountStatus.INACTIVE) && isNotNullOrZero(deposit.getAmount())) {
             account.setStatus(BankAccountStatus.ACTIVE);
         }
@@ -71,7 +71,7 @@ public class TransactionService {
 
     private PaymentTransaction createDepositTransactionEntry(final Deposit deposit) {
         PaymentTransaction transaction = PaymentTransaction.builder()
-                .creditAccount(deposit.getCreditAccount())
+                .creditAccount(deposit.getAccountNumber())
                 .transactionAmount(deposit.getAmount())
                 .date_received(LocalDateTime.now())
                 .date_processed(LocalDateTime.now())
