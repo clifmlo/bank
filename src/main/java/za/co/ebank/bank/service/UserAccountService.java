@@ -1,6 +1,7 @@
 package za.co.ebank.bank.service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,6 +60,10 @@ public class UserAccountService {
     
     private boolean userExist(final String email) {        
         return !userAccountRepo.findByEmail(email).isEmpty();
+    }
+
+    public List<UserAccount> findAll() {
+        return userAccountRepo.findAll();
     }
     
 }
