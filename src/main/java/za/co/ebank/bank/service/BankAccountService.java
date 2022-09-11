@@ -5,6 +5,7 @@ import za.co.ebank.bank.repo.BankAccountRepo;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import za.co.ebank.bank.model.BankAccountStatus;
 import za.co.ebank.bank.model.dto.CreateBankAccount;
 
@@ -65,7 +66,8 @@ public class BankAccountService {
     public BigDecimal getAvailableBalance (final String accountNumber) {
         return bankAccountRepo.findByAccountNumber(accountNumber).getAvailableBalance();
     }
-    
-   
 
+    public List<BankAccount> findBankAccountsByUserId(final String userId) {
+        return bankAccountRepo.findByUserAccountId(userId);
+    }
 }

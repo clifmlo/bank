@@ -1,5 +1,6 @@
 package za.co.ebank.bank.web.controlller;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,17 @@ public class BankAccountsController {
         
         if (bankAccount != null) {
            return new ResponseEntity(bankAccount, HttpStatus.OK);
+        }
+        
+        return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+    
+    @GetMapping("user/{id}")
+    public ResponseEntity findBankAccountsByUserId(@PathVariable final String userId) {
+        List<BankAccount> bankAccounts = bankAccountService.findBankAccountsByUserId(userId);
+        
+        if (bankAccounts != null) {
+           return new ResponseEntity(bankAccounts, HttpStatus.OK);
         }
         
         return new ResponseEntity(HttpStatus.NOT_FOUND);
