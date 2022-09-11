@@ -11,5 +11,5 @@ public interface BankAccountRepo extends JpaRepository<BankAccount, Long> {
     public BankAccount findByAccountNumber (final String accountNumber);
     
     @Query("SELECT b FROM BankAccount b WHERE b.user_account_id = ?1")
-    public List<BankAccount> findByUserAccountId(final String userId);
+    public List<BankAccount> findByUserAccountId(final long userId);
 }

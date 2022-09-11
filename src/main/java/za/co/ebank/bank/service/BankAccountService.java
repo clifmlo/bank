@@ -67,7 +67,7 @@ public class BankAccountService {
         return bankAccountRepo.findByAccountNumber(accountNumber).getAvailableBalance();
     }
 
-    public List<BankAccount> findBankAccountsByUserId(final String userId) {
+    public List<BankAccount> findBankAccountsByUserId(final long userId) {
         return bankAccountRepo.findByUserAccountId(userId);
     }
 }

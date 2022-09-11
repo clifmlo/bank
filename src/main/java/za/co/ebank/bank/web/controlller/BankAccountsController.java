@@ -47,8 +47,9 @@ public class BankAccountsController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
     
-    @GetMapping("user/{id}")
-    public ResponseEntity findBankAccountsByUserId(@PathVariable final String userId) {
+    @GetMapping("user/{userId}")
+    public ResponseEntity findBankAccountsByUserId(@PathVariable final long userId) {
+       // log.info(userId);
         List<BankAccount> bankAccounts = bankAccountService.findBankAccountsByUserId(userId);
         
         if (bankAccounts != null) {
