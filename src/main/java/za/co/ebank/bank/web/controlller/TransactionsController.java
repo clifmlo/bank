@@ -30,7 +30,7 @@ public class TransactionsController {
         return new ResponseEntity(transactionService.deposit(deposit), HttpStatus.OK);
     }
     
-    @PostMapping("pay")
+    @PostMapping("transfer")
     public ResponseEntity payAnotherAccount(@RequestBody final PaymentTransaction transaction) {
         return new ResponseEntity(transactionService.payAnotherAccount(transaction), HttpStatus.OK);
     }
