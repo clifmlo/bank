@@ -65,5 +65,9 @@ public class UserAccountService {
     public List<UserAccount> findAll() {
         return userAccountRepo.findAll();
     }
+
+    public Optional<UserAccount> findByEmil(final String email) {
+        return userAccountRepo.findByEmail(email);
+    }
     
 }

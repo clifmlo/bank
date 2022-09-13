@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import za.co.ebank.bank.model.BankAccountStatus;
 import za.co.ebank.bank.model.dto.CreateBankAccount;
 
@@ -41,14 +42,13 @@ public class BankAccountService {
         return bankAccountRepo.save(account);
     }
     
-    private boolean isNotNullOrZero(final BigDecimal value) {
-        return value != null && !BigDecimal.ZERO.equals(value);
+    private String generateAccountNumber() {        
+        Random rand = new Random();       
+        return String.valueOf(1000000000 + (int) (rand.nextDouble() * 999999999)); 
     }
     
-    private String generateAccountNumber() {
-        
-    //TODO generate proper account numbers
-        return "783456789";
+    private boolean isNotNullOrZero(final BigDecimal value) {
+        return value != null && !BigDecimal.ZERO.equals(value);
     }
     
     public BankAccount updateBankAccount(final BankAccount bankAccount) {

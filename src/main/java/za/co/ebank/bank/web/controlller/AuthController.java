@@ -1,5 +1,7 @@
 package za.co.ebank.bank.web.controlller;
 
+import java.util.Base64;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import za.co.ebank.bank.exception.UserExistsException;
 import za.co.ebank.bank.model.ApiResponse;
-
-import za.co.ebank.bank.model.dto.LoginDto;
 import za.co.ebank.bank.model.dto.SignUpDto;
 import za.co.ebank.bank.model.persistence.UserAccount;
 import za.co.ebank.bank.service.UserAccountService;
@@ -51,12 +52,24 @@ public class AuthController {
     }
 
     @PostMapping("signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody final LoginDto loginDto){
-//        log.info("hit sign in method");
-//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-//                loginDto.getEmail(), loginDto.getPassword()));
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
-    }
+    public ResponseEntity<String> authenticateUser(HttpServletRequest request){
+        try {            
+            final String authorization = request.getHeader("Authorization");
+            if (authorization != null && authorization.toLowerCase().startsWith("basic")) {            
+                String base64Credentials = authorization.substring(5).trim();            
+                byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
+                String credentials = new String(credDecoded);
+                String email = credentials.split(":")[0];
+                String password = credentials.split(":")[1];
+
+                Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                return new ResponseEntity(userAccountService.findByEmil(authentication.getName()), HttpStatus.OK);
+            }
+        
+        } catch (AuthenticationException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
+    }  
 }
