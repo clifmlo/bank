@@ -27,11 +27,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Override
     protected void configure(HttpSecurity security) throws Exception {
-        security.cors().and().csrf().disable();
-        security.httpBasic().disable();
+         security.cors().and().csrf().disable();
+//        security.httpBasic().disable();
 //        security
 //                .authorizeRequests()
-//                .antMatchers("/auth/admin/**").hasRole("ADMIN")
+//                .antMatchers("/api/v1/auth/admin/**").hasRole("ADMIN")
+//                .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
+//                .antMatchers("/api/v1/user/**").hasAnyRole("ADMIN","USER")
 //                .antMatchers("/auth/signin").permitAll()
 //                .anyRequest()
 //                .authenticated()

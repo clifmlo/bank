@@ -1,12 +1,22 @@
+
 package za.co.ebank.bank.service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import javax.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
+import org.passay.CharacterData;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import za.co.ebank.bank.builders.MailBuilder;
 import za.co.ebank.bank.exception.UserExistsException;
+import za.co.ebank.bank.mailer.Email;
+import za.co.ebank.bank.mailer.MailSender;
 import za.co.ebank.bank.model.dto.SignUpDto;
 import za.co.ebank.bank.model.persistence.Role;
 import za.co.ebank.bank.model.persistence.UserAccount;
@@ -19,21 +29,27 @@ public class UserAccountService {
     private final UserAccountRepo userAccountRepo;
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
+    private final MailSender mailSender;
+    
+    @Value("{spring.mail.from}")
+    private String mailFrom;
 
-    public UserAccountService(final UserAccountRepo userAccountRepo, final RoleRepo roleRepo, final PasswordEncoder passwordEncoder) {
+    public UserAccountService(final UserAccountRepo userAccountRepo, final RoleRepo roleRepo, final PasswordEncoder passwordEncoder, final MailSender mailSender) {
         this.userAccountRepo = userAccountRepo;
         this.passwordEncoder = passwordEncoder;
         this.roleRepo = roleRepo;
+        this.mailSender = mailSender;
     }
 
-    public UserAccount createUserAccount(final SignUpDto signUpDto) throws UserExistsException {
+    public UserAccount createUserAccount(final SignUpDto signUpDto) throws UserExistsException, MessagingException {
         //check if user exists
         if (userExist(signUpDto.getEmail())) {
             throw new UserExistsException("There is already an account with email: " + signUpDto.getEmail());
         }
 
         //encrypt password
-        final String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
+        final String geneRatedPassword = generateRandomPassword();
+        final String encodedPassword = passwordEncoder.encode(geneRatedPassword);
         UserAccount userAccount = new UserAccount();
         userAccount.setName(signUpDto.getName());
         userAccount.setSurname(signUpDto.getSurname());
@@ -45,9 +61,11 @@ public class UserAccountService {
         
         Role roles = roleRepo.findByName("USER").get();
         userAccount.setRoles(Collections.singleton(roles));
-        return userAccountRepo.save(userAccount);
+        userAccountRepo.save(userAccount);
+                
+        sendRegistrationMail(userAccount, geneRatedPassword);
 
-        //sendEmail with temp password to be changed upon log in        
+        return userAccount;        
     }
     
     public UserAccount updateUserAccount(final UserAccount userAccount) {      
@@ -68,6 +86,53 @@ public class UserAccountService {
 
     public Optional<UserAccount> findByEmil(final String email) {
         return userAccountRepo.findByEmail(email);
+    } 
+    
+    void sendRegistrationMail(final UserAccount userAccount, final String password) throws MessagingException {        
+        final Email mail = new MailBuilder()
+        .from(this.mailFrom) // For gmail, this field is ignored.
+        .to(userAccount.getEmail())
+        .template("email.html")
+        .addContext("name", userAccount.getName())
+        .addContext("email", userAccount.getEmail())
+        .addContext("pass", password)
+        .addContext("link", "www.google.com")
+        .subject("Welcome to eBank")
+        .createMail();
+       
+        this.mailSender.sendHTMLEmail(mail);
     }
     
+    public String generateRandomPassword() {
+        PasswordGenerator gen = new PasswordGenerator();
+        CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
+        CharacterRule lowerCaseRule = new CharacterRule(lowerCaseChars);
+        lowerCaseRule.setNumberOfCharacters(2);
+
+        CharacterData upperCaseChars = EnglishCharacterData.UpperCase;
+        CharacterRule upperCaseRule = new CharacterRule(upperCaseChars);
+        upperCaseRule.setNumberOfCharacters(2);
+
+        CharacterData digitChars = EnglishCharacterData.Digit;
+        CharacterRule digitRule = new CharacterRule(digitChars);
+        digitRule.setNumberOfCharacters(2);
+
+        CharacterData specialChars = new CharacterData() {
+            @Override
+            public String getErrorCode() {
+                return "";
+            }
+            @Override
+            public String getCharacters() {
+                return "!@#$%^&*()_+";
+            }
+        };
+        
+        CharacterRule splCharRule = new CharacterRule(specialChars);
+        splCharRule.setNumberOfCharacters(2);
+
+        String password = gen.generatePassword(10, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
+        
+        return password;
+    }
 }

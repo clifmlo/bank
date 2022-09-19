@@ -1,6 +1,7 @@
 package za.co.ebank.bank.web.controlller;
 
 import java.util.Base64;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -41,17 +42,21 @@ public class AuthController {
         this.userAccountService = userAccountService;
     }
     
-    @PostMapping("signup")
-    public ResponseEntity createUserAccount(@Valid @RequestBody final SignUpDto signUpDto) {        
+    @PostMapping("admin/signup")
+    public ResponseEntity createUserAccount(@Valid @RequestBody final SignUpDto signUpDto) {         
         try{
             UserAccount createdUserAccount = userAccountService.createUserAccount(signUpDto);        
             return new ResponseEntity(new ApiResponse(createdUserAccount, "success", false), HttpStatus.OK);
         } catch (UserExistsException ex){
+            log.error(ex.getMessage());
             return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.BAD_REQUEST);
+        } catch (MessagingException ex) {
+            log.error(ex.getMessage());
+            return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("signin")
+    @PostMapping("user/signin")
     public ResponseEntity<String> authenticateUser(HttpServletRequest request){
         try {            
             final String authorization = request.getHeader("Authorization");
