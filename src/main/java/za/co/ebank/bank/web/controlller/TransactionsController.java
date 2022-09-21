@@ -12,7 +12,7 @@ import za.co.ebank.bank.model.dto.Deposit;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import za.co.ebank.bank.model.persistence.PaymentTransaction;
+import za.co.ebank.bank.model.dto.TransactionDto;
 
 @RequestMapping("api/v1/transaction")
 @RestController
@@ -31,7 +31,7 @@ public class TransactionsController {
     }
     
     @PostMapping("transfer")
-    public ResponseEntity payAnotherAccount(@RequestBody final PaymentTransaction transaction) {
+    public ResponseEntity payAnotherAccount(@RequestBody final TransactionDto transaction) {
         return new ResponseEntity(transactionService.payAnotherAccount(transaction), HttpStatus.OK);
     }
     

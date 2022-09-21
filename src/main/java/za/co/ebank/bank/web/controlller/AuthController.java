@@ -1,5 +1,6 @@
 package za.co.ebank.bank.web.controlller;
 
+import java.net.UnknownHostException;
 import java.util.Base64;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +51,7 @@ public class AuthController {
         } catch (UserExistsException ex){
             log.error(ex.getMessage());
             return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.BAD_REQUEST);
-        } catch (MessagingException ex) {
+        } catch (MessagingException | UnknownHostException ex) {
             log.error(ex.getMessage());
             return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.INTERNAL_SERVER_ERROR);
         }

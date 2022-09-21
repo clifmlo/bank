@@ -1,6 +1,8 @@
 
 package za.co.ebank.bank.service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +33,10 @@ public class UserAccountService {
     private final PasswordEncoder passwordEncoder;
     private final MailSender mailSender;
     
-    @Value("{spring.mail.from}")
+    @Value("${spring.mail.from}")
     private String mailFrom;
+    @Value("${server.port}")
+    private String serverPort;
 
     public UserAccountService(final UserAccountRepo userAccountRepo, final RoleRepo roleRepo, final PasswordEncoder passwordEncoder, final MailSender mailSender) {
         this.userAccountRepo = userAccountRepo;
@@ -41,7 +45,7 @@ public class UserAccountService {
         this.mailSender = mailSender;
     }
 
-    public UserAccount createUserAccount(final SignUpDto signUpDto) throws UserExistsException, MessagingException {
+    public UserAccount createUserAccount(final SignUpDto signUpDto) throws UserExistsException, MessagingException, UnknownHostException {
         //check if user exists
         if (userExist(signUpDto.getEmail())) {
             throw new UserExistsException("There is already an account with email: " + signUpDto.getEmail());
@@ -88,17 +92,17 @@ public class UserAccountService {
         return userAccountRepo.findByEmail(email);
     } 
     
-    void sendRegistrationMail(final UserAccount userAccount, final String password) throws MessagingException {        
+    void sendRegistrationMail(final UserAccount userAccount, final String password) throws MessagingException, UnknownHostException {        
         final Email mail = new MailBuilder()
-        .from(this.mailFrom) // For gmail, this field is ignored.
-        .to(userAccount.getEmail())
-        .template("email.html")
-        .addContext("name", userAccount.getName())
-        .addContext("email", userAccount.getEmail())
-        .addContext("pass", password)
-        .addContext("link", "www.google.com")
-        .subject("Welcome to eBank")
-        .createMail();
+                            .from(this.mailFrom) // For gmail, this field is ignored.
+                            .to(userAccount.getEmail())
+                            .template("email.html")
+                            .addContext("name", userAccount.getName())
+                            .addContext("email", userAccount.getEmail())
+                            .addContext("pass", password)
+                            .addContext("link", InetAddress.getLocalHost().getHostName() + ':' + this.serverPort)
+                            .subject("Welcome to eBank")
+                            .createMail();
        
         this.mailSender.sendHTMLEmail(mail);
     }

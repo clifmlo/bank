@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 import lombok.Builder;
 import lombok.NoArgsConstructor;    
 import lombok.AllArgsConstructor;
@@ -29,10 +30,15 @@ public class PaymentTransaction implements Serializable {
     private Long id;
     private String creditAccount;
     private String debitAccount;
-    private BigDecimal transactionAmount;
+    private BigDecimal debitEntry;
+    private BigDecimal creditEntry;
+    private BigDecimal debitBalance;
+    private BigDecimal creditBalance;
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
     private String reference;
+    @Transient
+    private String transactionType;
     @CreationTimestamp
     private LocalDateTime date_received;
     private LocalDateTime date_processed;
