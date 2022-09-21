@@ -139,4 +139,8 @@ public class UserAccountService {
         
         return password;
     }
+
+    public void deleteUserAccount(final long id) {
+        userAccountRepo.deleteById(id);
+    }
 }
