@@ -94,7 +94,7 @@ public class UserAccountService {
     
     void sendRegistrationMail(final UserAccount userAccount, final String password) throws MessagingException, UnknownHostException {        
         final Email mail = new MailBuilder()
-                            .from(this.mailFrom) // For gmail, this field is ignored.
+                            .from(this.mailFrom) 
                             .to(userAccount.getEmail())
                             .template("email.html")
                             .addContext("name", userAccount.getName())

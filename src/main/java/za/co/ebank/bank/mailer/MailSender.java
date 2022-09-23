@@ -17,18 +17,17 @@ public class MailSender {
 	
     private final JavaMailSender mailSender;
 
- 
     public MailSender(final JavaMailSender javamailSender) {
         this.mailSender = javamailSender;
     }
 
     public void sendHTMLEmail(Email message) throws MessagingException {
-            MimeMessage emailMessage = mailSender.createMimeMessage();
-            MimeMessageHelper mailBuilder = new MimeMessageHelper(emailMessage, true);
-            mailBuilder.setTo(message.getTo());
-            mailBuilder.setFrom(message.getFrom());			
-            mailBuilder.setText(message.getContent(), true);
-            mailBuilder.setSubject(message.getSubject());
-            mailSender.send(emailMessage);
+        MimeMessage emailMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mailBuilder = new MimeMessageHelper(emailMessage, true);
+        mailBuilder.setTo(message.getTo());
+        mailBuilder.setFrom(message.getFrom());			
+        mailBuilder.setText(message.getContent(), true);
+        mailBuilder.setSubject(message.getSubject());
+        mailSender.send(emailMessage);
     }
 }

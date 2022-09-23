@@ -18,7 +18,7 @@ public class TransactionsScheduler {
         this.transactionService = transactionService;
     }
     
-    //@Scheduled(cron = "0 * * * * *") //cron every minute
+    @Scheduled(cron = "0 * * * * *") //cron every minute
     public void processPengingTransactions() {
         log.info("cron started...");
         transactionService.processPendingTransactions();//poll for pending transactions every minute, update acount balances for those that are 10min and older

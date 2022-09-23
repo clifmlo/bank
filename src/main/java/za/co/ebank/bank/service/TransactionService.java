@@ -8,6 +8,7 @@ import za.co.ebank.bank.repo.TransactionRepo;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.transaction.Transactional;
 import za.co.ebank.bank.model.persistence.BankAccount;
 import za.co.ebank.bank.model.TransactionStatus;
 import za.co.ebank.bank.model.BankAccountStatus;
@@ -16,6 +17,7 @@ import za.co.ebank.bank.model.dto.TransactionDto;
 
 @Slf4j
 @Service
+@Transactional
 public class TransactionService {
     private final TransactionRepo transactionRepo;
     private final BankAccountService bankAccountService;

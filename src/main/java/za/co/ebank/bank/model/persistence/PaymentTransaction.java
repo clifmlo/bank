@@ -28,20 +28,32 @@ public class PaymentTransaction implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    
     private String creditAccount;
+    
     private String debitAccount;
+    
     private BigDecimal debitEntry;
+    
     private BigDecimal creditEntry;
+    
     private BigDecimal debitBalance;
+    
     private BigDecimal creditBalance;
+    
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
+    
     private String reference;
+    
     @Transient
     private String transactionType;
+    
     @CreationTimestamp
     private LocalDateTime date_received;
+    
     private LocalDateTime date_processed;
+    
     @UpdateTimestamp
     private LocalDateTime date_updated;
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import za.co.ebank.bank.model.persistence.Role;
 import za.co.ebank.bank.model.persistence.UserAccount;
 import za.co.ebank.bank.repo.UserAccountRepo;
@@ -19,6 +20,7 @@ import za.co.ebank.bank.repo.UserAccountRepo;
  * @author cliff
  */
 @Service
+@Transactional
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserAccountRepo userRepository;
 

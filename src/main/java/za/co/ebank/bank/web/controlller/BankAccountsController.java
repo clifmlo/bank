@@ -48,8 +48,7 @@ public class BankAccountsController {
     }
     
     @GetMapping("user/{userId}")
-    public ResponseEntity findBankAccountsByUserId(@PathVariable final long userId) {
-       // log.info(userId);
+    public ResponseEntity findBankAccountsByUserId(@PathVariable final long userId) {       
         List<BankAccount> bankAccounts = bankAccountService.findBankAccountsByUserId(userId);
         
         if (bankAccounts != null) {
