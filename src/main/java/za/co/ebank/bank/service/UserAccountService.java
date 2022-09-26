@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import za.co.ebank.bank.builders.MailBuilder;
+import za.co.ebank.bank.exception.PasswordMissmatchException;
 import za.co.ebank.bank.exception.UserExistsException;
 import za.co.ebank.bank.mailer.Email;
 import za.co.ebank.bank.mailer.MailSender;
@@ -62,6 +63,7 @@ public class UserAccountService {
         userAccount.setContactNumber(signUpDto.getContactNumber());
         userAccount.setPassword(encodedPassword);
         userAccount.setConfirmPassword(encodedPassword);
+        userAccount.setActive(false);
         
         Role roles = roleRepo.findByName("USER").get();
         userAccount.setRoles(Collections.singleton(roles));
@@ -142,5 +144,22 @@ public class UserAccountService {
 
     public void deleteUserAccount(final long id) {
         userAccountRepo.deleteById(id);
+    }
+
+    public void updatePassword(final String password, final String confirmPassword, final long id) throws PasswordMissmatchException {
+        final String encodedPassword = passwordEncoder.encode(password);        
+        UserAccount account = userAccountRepo.findById(id).get();
+        if (passwordsMatch(password, confirmPassword)) {
+            account.setPassword(encodedPassword);
+            account.setConfirmPassword(encodedPassword);
+            account.setActive(true);
+        } else {
+           throw new PasswordMissmatchException("Passwords do not match!");
+        }
+        userAccountRepo.save(account);
+    }
+    
+    private boolean passwordsMatch(final String pass1, final String pass2){
+        return pass1.equals(pass2);
     }
 }

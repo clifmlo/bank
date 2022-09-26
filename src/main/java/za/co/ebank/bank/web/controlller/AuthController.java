@@ -25,6 +25,8 @@ import za.co.ebank.bank.model.dto.SignUpDto;
 import za.co.ebank.bank.model.persistence.UserAccount;
 import za.co.ebank.bank.service.UserAccountService;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import za.co.ebank.bank.exception.PasswordMissmatchException;
+import za.co.ebank.bank.model.dto.PasswordChangeDto;
 
 /**
  *
@@ -78,4 +80,18 @@ public class AuthController {
         }
         return null;
     }  
+    
+    @PostMapping("user/password/change")
+    public ResponseEntity changeUserPassword(@RequestBody final PasswordChangeDto passwordChangeDto){
+        try{
+            String password = passwordChangeDto.getPassword();
+            String confirmPassword = passwordChangeDto.getConfirmPassword();
+            userAccountService.updatePassword(password, confirmPassword, passwordChangeDto.getId()); 
+
+            return new ResponseEntity(new ApiResponse(null, "success", false), HttpStatus.OK);
+        }catch(PasswordMissmatchException ex) {
+            log.error(ex.getMessage());
+            return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.BAD_REQUEST);     
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package za.co.ebank.bank.model.persistence;
 
+import io.micrometer.core.lang.Nullable;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -80,6 +81,9 @@ public class UserAccount implements Serializable {
         joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
+    
+    @Nullable
+    private boolean isActive;
     
     @CreationTimestamp
     private LocalDateTime date_created;
