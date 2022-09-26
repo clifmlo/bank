@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.passay.CharacterData;
 import org.passay.CharacterRule;
@@ -36,8 +37,6 @@ public class UserAccountService {
     
     @Value("${spring.mail.from}")
     private String mailFrom;
-    @Value("${server.port}")
-    private String serverPort;
 
     public UserAccountService(final UserAccountRepo userAccountRepo, final RoleRepo roleRepo, final PasswordEncoder passwordEncoder, final MailSender mailSender) {
         this.userAccountRepo = userAccountRepo;
@@ -46,11 +45,13 @@ public class UserAccountService {
         this.mailSender = mailSender;
     }
 
-    public UserAccount createUserAccount(final SignUpDto signUpDto) throws UserExistsException, MessagingException, UnknownHostException {
+    public UserAccount createUserAccount(final HttpServletRequest request, final SignUpDto signUpDto) throws UserExistsException, MessagingException, UnknownHostException {
         //check if user exists
         if (userExist(signUpDto.getEmail())) {
             throw new UserExistsException("There is already an account with email: " + signUpDto.getEmail());
         }
+        
+        String loginLink = request.getHeader("referer") + "login";
 
         //encrypt password
         final String geneRatedPassword = generateRandomPassword();
@@ -69,7 +70,7 @@ public class UserAccountService {
         userAccount.setRoles(Collections.singleton(roles));
         userAccountRepo.save(userAccount);
                 
-        sendRegistrationMail(userAccount, geneRatedPassword);
+        sendRegistrationMail(userAccount, geneRatedPassword, loginLink);
 
         return userAccount;        
     }
@@ -94,7 +95,7 @@ public class UserAccountService {
         return userAccountRepo.findByEmail(email);
     } 
     
-    void sendRegistrationMail(final UserAccount userAccount, final String password) throws MessagingException, UnknownHostException {        
+        void sendRegistrationMail(final UserAccount userAccount, final String password, final String loginLink) throws MessagingException, UnknownHostException {        
         final Email mail = new MailBuilder()
                             .from(this.mailFrom) 
                             .to(userAccount.getEmail())
@@ -102,7 +103,7 @@ public class UserAccountService {
                             .addContext("name", userAccount.getName())
                             .addContext("email", userAccount.getEmail())
                             .addContext("pass", password)
-                            .addContext("link", InetAddress.getLocalHost().getHostName() + ':' + this.serverPort)
+                            .addContext("link", loginLink)
                             .subject("Welcome to eBank")
                             .createMail();
        

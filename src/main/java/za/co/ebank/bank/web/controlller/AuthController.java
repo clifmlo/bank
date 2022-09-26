@@ -46,9 +46,9 @@ public class AuthController {
     }
     
     @PostMapping("admin/signup")
-    public ResponseEntity createUserAccount(@Valid @RequestBody final SignUpDto signUpDto) {         
+    public ResponseEntity createUserAccount(HttpServletRequest request, @Valid @RequestBody final SignUpDto signUpDto) {         
         try{
-            UserAccount createdUserAccount = userAccountService.createUserAccount(signUpDto);        
+            UserAccount createdUserAccount = userAccountService.createUserAccount(request, signUpDto);        
             return new ResponseEntity(new ApiResponse(createdUserAccount, "success", false), HttpStatus.OK);
         } catch (UserExistsException ex){
             log.error(ex.getMessage());
