@@ -84,8 +84,10 @@ public class AuthController {
     @PostMapping("user/password/change")
     public ResponseEntity changeUserPassword(@RequestBody final PasswordChangeDto passwordChangeDto){
         try{
-            String password = passwordChangeDto.getPassword();
-            String confirmPassword = passwordChangeDto.getConfirmPassword();
+            byte[] decodedPass = Base64.getDecoder().decode(passwordChangeDto.getPassword());
+            byte[] decodedConfirmPass = Base64.getDecoder().decode(passwordChangeDto.getConfirmPassword());
+            final String password = new String(decodedPass);
+            final String confirmPassword = new String(decodedConfirmPass);            
             userAccountService.updatePassword(password, confirmPassword, passwordChangeDto.getId()); 
 
             return new ResponseEntity(new ApiResponse(null, "success", false), HttpStatus.OK);
