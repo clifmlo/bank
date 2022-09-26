@@ -1,5 +1,6 @@
 package za.co.ebank.bank.model.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  * @author cliff
  */
 @Data
+@Builder
 public class SignUpDto {
     private String name;
     private String surname;

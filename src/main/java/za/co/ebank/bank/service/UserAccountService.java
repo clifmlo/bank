@@ -1,13 +1,11 @@
 
 package za.co.ebank.bank.service;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.passay.CharacterData;
 import org.passay.CharacterRule;
@@ -45,13 +43,11 @@ public class UserAccountService {
         this.mailSender = mailSender;
     }
 
-    public UserAccount createUserAccount(final HttpServletRequest request, final SignUpDto signUpDto) throws UserExistsException, MessagingException, UnknownHostException {
+    public UserAccount createUserAccount(final String loginLink, final SignUpDto signUpDto) throws UserExistsException, MessagingException, UnknownHostException {
         //check if user exists
         if (userExist(signUpDto.getEmail())) {
             throw new UserExistsException("There is already an account with email: " + signUpDto.getEmail());
-        }
-        
-        String loginLink = request.getHeader("referer") + "login";
+        }              
 
         //encrypt password
         final String geneRatedPassword = generateRandomPassword();
@@ -95,7 +91,7 @@ public class UserAccountService {
         return userAccountRepo.findByEmail(email);
     } 
     
-        void sendRegistrationMail(final UserAccount userAccount, final String password, final String loginLink) throws MessagingException, UnknownHostException {        
+    private void sendRegistrationMail(final UserAccount userAccount, final String password, final String loginLink) throws MessagingException, UnknownHostException {        
         final Email mail = new MailBuilder()
                             .from(this.mailFrom) 
                             .to(userAccount.getEmail())
