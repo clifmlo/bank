@@ -20,7 +20,6 @@ import za.co.ebank.bank.service.BankAccountService;
 @Slf4j
 @RequestMapping("/api/v1/bank-account")
 @RestController
-@CrossOrigin(origins = {"http://localhost:4200/"}, methods = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST, RequestMethod.OPTIONS})
 public class BankAccountsController {
     private final BankAccountService bankAccountService;
 
