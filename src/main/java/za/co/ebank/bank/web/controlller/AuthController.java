@@ -79,7 +79,8 @@ public class AuthController {
     }  
     
     @PostMapping("user/password/change")
-    public ResponseEntity changeUserPassword(@Valid @RequestBody final PasswordChangeDto passwordChangeDto){
+    public ResponseEntity changeUserPassword(@RequestBody final PasswordChangeDto passwordChangeDto){
+        log.info(passwordChangeDto.toString());
         try{
             byte[] decodedPass = Base64.getDecoder().decode(passwordChangeDto.getPassword());
             byte[] decodedConfirmPass = Base64.getDecoder().decode(passwordChangeDto.getConfirmPassword());

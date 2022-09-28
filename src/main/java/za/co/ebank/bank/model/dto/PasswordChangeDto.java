@@ -10,8 +10,6 @@ import za.co.ebank.bank.annotation.ValidPassword;
 @Data
 public class PasswordChangeDto {
     private long id;
-    @ValidPassword
     private String password;
-    @ValidPassword
     private String confirmPassword;
 }
