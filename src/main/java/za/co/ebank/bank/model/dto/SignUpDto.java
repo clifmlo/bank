@@ -2,6 +2,7 @@ package za.co.ebank.bank.model.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -9,6 +10,7 @@ import lombok.Data;
  */
 @Data
 @Builder
+@NoArgsConstructor
 public class SignUpDto {
     private String name;
     private String surname;

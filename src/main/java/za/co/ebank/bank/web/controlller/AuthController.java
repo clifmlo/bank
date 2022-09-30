@@ -43,7 +43,7 @@ public class AuthController {
     }
     
     @PostMapping("admin/signup")
-    public ResponseEntity createUserAccount(HttpServletRequest request, @Valid @RequestBody final SignUpDto signUpDto) {         
+    public ResponseEntity createUserAccount(HttpServletRequest request, @Valid @RequestBody final SignUpDto signUpDto) {                 
         try{
             UserAccount createdUserAccount = userAccountService.createUserAccount(request.getHeader("referer") + "login", signUpDto);        
             return new ResponseEntity(new ApiResponse(createdUserAccount, "success", false), HttpStatus.OK);
@@ -79,8 +79,7 @@ public class AuthController {
     }  
     
     @PostMapping("user/password/change")
-    public ResponseEntity changeUserPassword(@RequestBody final PasswordChangeDto passwordChangeDto){
-        log.info(passwordChangeDto.toString());
+    public ResponseEntity changeUserPassword(@RequestBody final PasswordChangeDto passwordChangeDto){       
         try{
             byte[] decodedPass = Base64.getDecoder().decode(passwordChangeDto.getPassword());
             byte[] decodedConfirmPass = Base64.getDecoder().decode(passwordChangeDto.getConfirmPassword());
