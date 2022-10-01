@@ -15,6 +15,7 @@ import za.co.ebank.bank.model.dto.TransactionDto;
 import za.co.ebank.bank.model.persistence.BankAccount;
 import za.co.ebank.bank.model.persistence.PaymentTransaction;
 import za.co.ebank.bank.repo.BankAccountRepo;
+import za.co.ebank.bank.exception.BankAccountException;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)  
@@ -29,7 +30,7 @@ public class TransactionServiceTests {
     BankAccountRepo bankAccountRepo;
 
     @Test
-    public void shouldPayAnotherAccount() {
+    public void shouldPayAnotherAccount() throws BankAccountException {
         Deposit deposit = Deposit.builder()
                 .accountNumber("1776579871")
                 .amount(BigDecimal.valueOf(500))

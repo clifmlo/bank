@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import javax.transaction.Transactional;
+import za.co.ebank.bank.exception.BankAccountException;
 import za.co.ebank.bank.model.BankAccountStatus;
 import za.co.ebank.bank.model.dto.CreateBankAccount;
 
@@ -71,5 +72,13 @@ public class BankAccountService {
 
     public List<BankAccount> findBankAccountsByUserId(final long userId) {
         return bankAccountRepo.findByUserAccountId(userId);
+    }
+    
+    public void deleteAccount(final long id) throws BankAccountException{
+        BankAccount account = bankAccountRepo.findById(id).get();
+        if (account.getAvailableBalance().compareTo(BigDecimal.ZERO) > 0) {
+            throw new BankAccountException("You cannot delete an account with positive balance.");
+        }
+        bankAccountRepo.deleteById(id);
     }
 }
