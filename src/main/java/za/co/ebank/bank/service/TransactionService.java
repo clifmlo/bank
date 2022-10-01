@@ -13,6 +13,7 @@ import za.co.ebank.bank.model.persistence.BankAccount;
 import za.co.ebank.bank.model.TransactionStatus;
 import za.co.ebank.bank.model.BankAccountStatus;
 import lombok.extern.slf4j.Slf4j;
+import za.co.ebank.bank.exception.BankAccountException;
 import za.co.ebank.bank.model.dto.TransactionDto;
 
 @Slf4j
@@ -43,7 +44,11 @@ public class TransactionService {
         return value != null && !BigDecimal.ZERO.equals(value);
     }
      
-    public PaymentTransaction payAnotherAccount(final TransactionDto transactionDto) {  
+    public PaymentTransaction payAnotherAccount(final TransactionDto transactionDto) throws BankAccountException {  
+        if (transactionDto.getCreditAccount().equals(transactionDto.getDebitAccount())) {
+            throw new BankAccountException("Debit account is same as credit account");
+        }
+        
         PaymentTransaction transaction = mapTransaction(transactionDto);
         
         BankAccount creditAccount = bankAccountService.findByAccountNumber(transaction.getCreditAccount());

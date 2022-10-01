@@ -1,5 +1,6 @@
 package za.co.ebank.bank.web.controlller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.ebank.bank.service.TransactionService;
 import org.springframework.http.HttpStatus;
@@ -10,10 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import za.co.ebank.bank.model.dto.Deposit;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import za.co.ebank.bank.exception.BankAccountException;
+import za.co.ebank.bank.model.ApiResponse;
 import za.co.ebank.bank.model.dto.TransactionDto;
 
 @RequestMapping("api/v1/transaction")
 @RestController
+@Slf4j
 public class TransactionsController {
     
     final TransactionService transactionService;
@@ -29,7 +33,12 @@ public class TransactionsController {
     
     @PostMapping("transfer")
     public ResponseEntity payAnotherAccount(@RequestBody final TransactionDto transaction) {
-        return new ResponseEntity(transactionService.payAnotherAccount(transaction), HttpStatus.OK);
+        try {
+            return new ResponseEntity(transactionService.payAnotherAccount(transaction), HttpStatus.OK);
+        } catch (BankAccountException ex){
+            log.error(ex.getMessage());
+            return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.BAD_REQUEST);     
+        }
     }
     
     @GetMapping("{accountNumber}")
