@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import za.co.ebank.bank.model.TransactionStatus;
+import za.co.ebank.bank.model.enumeration.TransactionStatus;
 
 @Entity
 @Data

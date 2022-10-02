@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 import javax.transaction.Transactional;
 import za.co.ebank.bank.exception.BankAccountException;
-import za.co.ebank.bank.model.BankAccountStatus;
+import za.co.ebank.bank.model.enumeration.BankAccountStatus;
 import za.co.ebank.bank.model.dto.CreateBankAccount;
 
 @Service

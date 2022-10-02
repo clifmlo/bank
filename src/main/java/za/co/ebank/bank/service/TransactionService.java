@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.transaction.Transactional;
 import za.co.ebank.bank.model.persistence.BankAccount;
-import za.co.ebank.bank.model.TransactionStatus;
-import za.co.ebank.bank.model.BankAccountStatus;
+import za.co.ebank.bank.model.enumeration.TransactionStatus;
+import za.co.ebank.bank.model.enumeration.BankAccountStatus;
 import lombok.extern.slf4j.Slf4j;
 import za.co.ebank.bank.exception.BankAccountException;
 import za.co.ebank.bank.model.dto.TransactionDto;
@@ -44,14 +44,17 @@ public class TransactionService {
         return value != null && !BigDecimal.ZERO.equals(value);
     }
      
-    public PaymentTransaction payAnotherAccount(final TransactionDto transactionDto) throws BankAccountException {  
+    public PaymentTransaction payAnotherAccount(final TransactionDto transactionDto) throws BankAccountException {          
         if (transactionDto.getCreditAccount().equals(transactionDto.getDebitAccount())) {
             throw new BankAccountException("Debit account is same as credit account");
-        }
+        } 
+        BankAccount creditAccount = bankAccountService.findByAccountNumber(transactionDto.getCreditAccount());
         
-        PaymentTransaction transaction = mapTransaction(transactionDto);
+        if (creditAccount.getStatus().equals(BankAccountStatus.INACTIVE)) {
+            throw new BankAccountException("Credit account is inactive.");
+        } 
         
-        BankAccount creditAccount = bankAccountService.findByAccountNumber(transaction.getCreditAccount());
+        PaymentTransaction transaction = mapTransaction(transactionDto);                
         BankAccount debitAccount = bankAccountService.findByAccountNumber(transaction.getDebitAccount());
         
         debitAccount.setAvailableBalance(debitAccount.getAvailableBalance().subtract(transaction.getCreditEntry()));       

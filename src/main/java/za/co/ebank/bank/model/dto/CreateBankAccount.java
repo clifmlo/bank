@@ -6,7 +6,7 @@ import javax.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import za.co.ebank.bank.model.AccountType;
+import za.co.ebank.bank.model.enumeration.AccountType;
 
 @Data
 @Builder

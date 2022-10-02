@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import za.co.ebank.bank.model.AccountType;
+import za.co.ebank.bank.model.enumeration.AccountType;
 import za.co.ebank.bank.model.dto.CreateBankAccount;
 import za.co.ebank.bank.model.dto.Deposit;
 import za.co.ebank.bank.model.dto.TransactionDto;

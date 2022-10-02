@@ -12,8 +12,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import za.co.ebank.bank.model.AccountType;
-import za.co.ebank.bank.model.BankAccountStatus;
+import za.co.ebank.bank.model.enumeration.AccountType;
+import za.co.ebank.bank.model.enumeration.BankAccountStatus;
 
 @Builder
 @NoArgsConstructor
