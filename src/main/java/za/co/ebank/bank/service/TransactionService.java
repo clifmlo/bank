@@ -44,18 +44,18 @@ public class TransactionService {
         return value != null && !BigDecimal.ZERO.equals(value);
     }
      
-    public PaymentTransaction payAnotherAccount(final TransactionDto transactionDto) throws BankAccountException {          
-        if (transactionDto.getCreditAccount().equals(transactionDto.getDebitAccount())) {
-            throw new BankAccountException("Debit account is same as credit account");
-        } 
+    public PaymentTransaction payAnotherAccount(final TransactionDto transactionDto) throws BankAccountException{          
+        validateAccounts(transactionDto);
         BankAccount creditAccount = bankAccountService.findByAccountNumber(transactionDto.getCreditAccount());
+        BankAccount debitAccount = bankAccountService.findByAccountNumber(transactionDto.getDebitAccount());
+        validateDebitAccount(debitAccount, transactionDto);
         
         if (creditAccount.getStatus().equals(BankAccountStatus.INACTIVE)) {
             throw new BankAccountException("Credit account is inactive.");
         } 
         
         PaymentTransaction transaction = mapTransaction(transactionDto);                
-        BankAccount debitAccount = bankAccountService.findByAccountNumber(transaction.getDebitAccount());
+       
         
         debitAccount.setAvailableBalance(debitAccount.getAvailableBalance().subtract(transaction.getCreditEntry()));       
         transaction.setDate_received(LocalDateTime.now());
@@ -82,6 +82,18 @@ public class TransactionService {
         }
         
         return transaction;
+    }
+    
+    private void validateDebitAccount(final BankAccount debitAccount, final TransactionDto transactionDto) throws BankAccountException {
+        if (debitAccount.getAvailableBalance().compareTo(transactionDto.getTransactionAmount()) < 0 ) {
+            throw new BankAccountException("Insufficient funds");
+        } 
+    }
+    
+    private void validateAccounts(final TransactionDto transactionDto) throws BankAccountException {
+        if (transactionDto.getCreditAccount().equals(transactionDto.getDebitAccount())) {
+            throw new BankAccountException("Debit account is same as credit account");
+        } 
     }
     
     private PaymentTransaction mapTransaction(TransactionDto transactionDto) {
