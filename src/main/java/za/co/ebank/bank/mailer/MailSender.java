@@ -5,6 +5,7 @@ import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j; 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,7 +21,8 @@ public class MailSender {
     public MailSender(final JavaMailSender javamailSender) {
         this.mailSender = javamailSender;
     }
-
+ 
+    @Async
     public void sendHTMLEmail(Email message) throws MessagingException {
         MimeMessage emailMessage = mailSender.createMimeMessage();
         MimeMessageHelper mailBuilder = new MimeMessageHelper(emailMessage, true);

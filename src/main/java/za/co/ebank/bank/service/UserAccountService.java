@@ -12,6 +12,7 @@ import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import za.co.ebank.bank.builders.MailBuilder;
@@ -89,7 +90,7 @@ public class UserAccountService {
 
     public Optional<UserAccount> findByEmil(final String email) {
         return userAccountRepo.findByEmail(email);
-    } 
+    }
     
     private void sendRegistrationMail(final UserAccount userAccount, final String password, final String loginLink) throws MessagingException, UnknownHostException {        
         final Email mail = new MailBuilder()
