@@ -32,15 +32,13 @@ public class BankAccountsController {
     public BankAccountsController(final BankAccountService bankAccountService) {
       this.bankAccountService = bankAccountService;
     }
-
-    @PreAuthorize("hasRole('ADMIN')")
+    
     @PostMapping("create")
     public ResponseEntity createBankAccount(@RequestBody final CreateBankAccount bankAccount) {
         BankAccount createdBankAccount = bankAccountService.createBankAccount(bankAccount);        
         return createdBankAccount.getId() > 0 ? new ResponseEntity(createdBankAccount, HttpStatus.CREATED) : new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+       
     @GetMapping("{accountNumber}")
     public ResponseEntity findBankAccount(@PathVariable final String accountNumber) {
         BankAccount bankAccount = bankAccountService.findByAccountNumber(accountNumber);
@@ -51,8 +49,7 @@ public class BankAccountsController {
         
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
-    
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+       
     @GetMapping("user/{userId}")
     public ResponseEntity findBankAccountsByUserId(@PathVariable final long userId) {       
         List<BankAccount> bankAccounts = bankAccountService.findBankAccountsByUserId(userId);
@@ -72,8 +69,7 @@ public class BankAccountsController {
 //        
 //        return new ResponseEntity(bankAccount, HttpStatus.OK);            
 //    }
-    
-    @PreAuthorize("hasRole('ADMIN')")
+        
     @DeleteMapping("delete/{id}")
     public ResponseEntity createBankAccount(@PathVariable final long id) {
         try {
