@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ public class UserAccountController {
        this.userAccountService = userAccountService;
     }
     
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("{id}")
     public ResponseEntity findUserAccount(@PathVariable final long id) {
         Optional<UserAccount> userAccount = userAccountService.findById(id);
@@ -34,12 +36,14 @@ public class UserAccountController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("all")
     public ResponseEntity findUserAllUsers() {
         List<UserAccount> users = userAccountService.findAll();
         return new ResponseEntity(users, HttpStatus.OK);
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("update")
     public ResponseEntity updateUserAccount(@RequestBody final UserAccount userAccount) {
         UserAccount updatedUserAccount = userAccountService.updateUserAccount(userAccount);
@@ -47,6 +51,7 @@ public class UserAccountController {
         return new ResponseEntity(updatedUserAccount, HttpStatus.OK);
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("delete/{id}")
     public ResponseEntity deleteUserAccount(@PathVariable final long id) {
         userAccountService.deleteUserAccount(id);        

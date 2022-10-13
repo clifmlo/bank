@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,7 @@ public class AuthController {
         this.userAccountService = userAccountService;
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("admin/signup")
     public ResponseEntity createUserAccount(HttpServletRequest request, @Valid @RequestBody final SignUpDto signUpDto) {                 
         try{
@@ -78,6 +80,7 @@ public class AuthController {
         return null;
     }  
     
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("user/password/change")
     public ResponseEntity changeUserPassword(@RequestBody final PasswordChangeDto passwordChangeDto){       
         try{

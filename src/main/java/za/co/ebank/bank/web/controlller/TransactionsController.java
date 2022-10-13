@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.ebank.bank.service.TransactionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,11 +27,13 @@ public class TransactionsController {
         this.transactionService = transactionService;
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("deposit")
     public ResponseEntity deposit(@RequestBody final Deposit deposit) {
         return new ResponseEntity(transactionService.deposit(deposit), HttpStatus.OK);
     }
     
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("transfer")
     public ResponseEntity payAnotherAccount(@RequestBody final TransactionDto transaction) {
         try {
@@ -41,8 +44,9 @@ public class TransactionsController {
         }
     }
     
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("{accountNumber}")
-    public ResponseEntity findByAccountNumber(@PathVariable final String accountNumber) {
+    public ResponseEntity findTransactionsByAccountNumber(@PathVariable final String accountNumber) {
         return new ResponseEntity(transactionService.findByAccountNumber(accountNumber), HttpStatus.OK);
     }
 }
