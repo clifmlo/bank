@@ -14,6 +14,7 @@ import za.co.ebank.bank.model.enumeration.TransactionStatus;
 import za.co.ebank.bank.model.enumeration.BankAccountStatus;
 import lombok.extern.slf4j.Slf4j;
 import za.co.ebank.bank.exception.BankAccountException;
+import za.co.ebank.bank.exception.UserAccountException;
 import za.co.ebank.bank.model.dto.TransactionDto;
 
 @Slf4j
@@ -22,14 +23,17 @@ import za.co.ebank.bank.model.dto.TransactionDto;
 public class TransactionService {
     private final TransactionRepo transactionRepo;
     private final BankAccountService bankAccountService;
+    private final UserAccountService userAccountService;
 
-    public TransactionService(final TransactionRepo transactionRepo, BankAccountService bankAccountService) {
+    public TransactionService(final TransactionRepo transactionRepo, BankAccountService bankAccountService, UserAccountService userAccountService) {
         this.transactionRepo = transactionRepo;
         this.bankAccountService = bankAccountService;
+        this.userAccountService = userAccountService;
     }
 
-    public PaymentTransaction deposit(final Deposit deposit) {
+    public PaymentTransaction deposit(final Deposit deposit) throws UserAccountException {
         BankAccount account = bankAccountService.findByAccountNumber(deposit.getAccountNumber());
+        validateUserAccount(account);
         if (account.getStatus().equals(BankAccountStatus.INACTIVE) && isNotNullOrZero(deposit.getAmount())) {
             account.setStatus(BankAccountStatus.ACTIVE);
         }
@@ -43,20 +47,19 @@ public class TransactionService {
     private boolean isNotNullOrZero(final BigDecimal value) {
         return value != null && !BigDecimal.ZERO.equals(value);
     }
-     
+    
+    private void validateUserAccount(final BankAccount account) throws UserAccountException {
+        if(!userAccountService.findById(account.getUser_account_id()).get().isActive())
+        throw new UserAccountException("Bank account is deactivated: " + account.getAccountNumber());    
+    }
+    
     public PaymentTransaction payAnotherAccount(final TransactionDto transactionDto) throws BankAccountException{          
         validateAccounts(transactionDto);
         BankAccount creditAccount = bankAccountService.findByAccountNumber(transactionDto.getCreditAccount());
         BankAccount debitAccount = bankAccountService.findByAccountNumber(transactionDto.getDebitAccount());
-        validateDebitAccount(debitAccount, transactionDto);
-        
-        if (creditAccount.getStatus().equals(BankAccountStatus.INACTIVE)) {
-            throw new BankAccountException("Credit account is inactive.");
-        } 
-        
+        validateDebitAccount(debitAccount, transactionDto); 
+        validateCreditAccount(creditAccount);
         PaymentTransaction transaction = mapTransaction(transactionDto);                
-       
-        
         debitAccount.setAvailableBalance(debitAccount.getAvailableBalance().subtract(transaction.getCreditEntry()));       
         transaction.setDate_received(LocalDateTime.now());
         transaction.setDebitEntry(transaction.getCreditEntry().negate());
@@ -84,9 +87,21 @@ public class TransactionService {
         return transaction;
     }
     
-    private void validateDebitAccount(final BankAccount debitAccount, final TransactionDto transactionDto) throws BankAccountException {
+    private boolean accountInActive(BankAccount account){
+        return account.getStatus().equals(BankAccountStatus.INACTIVE);
+    }
+    
+    private void validateDebitAccount(final BankAccount debitAccount, final TransactionDto transactionDto) throws BankAccountException {        
+        if (accountInActive(debitAccount)) {
+            throw new BankAccountException("Account is inactive: "+ debitAccount.getAccountNumber());
+        } 
         if (debitAccount.getAvailableBalance().compareTo(transactionDto.getTransactionAmount()) < 0 ) {
             throw new BankAccountException("Insufficient funds");
+        } 
+    }
+    private void validateCreditAccount(final BankAccount creditAccount) throws BankAccountException {        
+        if (accountInActive(creditAccount)) {
+            throw new BankAccountException("Account is inactive: "+ creditAccount.getAccountNumber());
         } 
     }
     

@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import za.co.ebank.bank.exception.UserExistsException;
+import za.co.ebank.bank.exception.UserAccountException;
 import za.co.ebank.bank.model.ApiResponse;
 import za.co.ebank.bank.model.dto.SignUpDto;
 import za.co.ebank.bank.model.persistence.UserAccount;
@@ -42,14 +41,13 @@ public class AuthController {
     public AuthController(final UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
-    
-    @PreAuthorize("hasRole('ADMIN')")
+        
     @PostMapping("admin/signup")
     public ResponseEntity createUserAccount(HttpServletRequest request, @Valid @RequestBody final SignUpDto signUpDto) {                 
         try{
             UserAccount createdUserAccount = userAccountService.createUserAccount(request.getHeader("referer") + "login", signUpDto);        
             return new ResponseEntity(new ApiResponse(createdUserAccount, "success", false), HttpStatus.OK);
-        } catch (UserExistsException ex){
+        } catch (UserAccountException ex){
             log.error(ex.getMessage());
             return new ResponseEntity(new ApiResponse(null, ex.getMessage(), true),  HttpStatus.BAD_REQUEST);
         } catch (MessagingException | UnknownHostException ex) {
@@ -80,7 +78,6 @@ public class AuthController {
         return null;
     }  
     
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("user/password/change")
     public ResponseEntity changeUserPassword(@RequestBody final PasswordChangeDto passwordChangeDto){       
         try{

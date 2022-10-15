@@ -79,6 +79,9 @@ public class BankAccountService {
         if (account.getAvailableBalance().compareTo(BigDecimal.ZERO) > 0) {
             throw new BankAccountException("You cannot delete an account with positive balance.");
         }
+        if (account.getAvailableBalance().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BankAccountException("You cannot delete an account with negative balance.");
+        }
         bankAccountRepo.deleteById(id);
     }
 }

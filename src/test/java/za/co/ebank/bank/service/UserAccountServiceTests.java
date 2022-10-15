@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import za.co.ebank.bank.exception.UserExistsException;
+import za.co.ebank.bank.exception.UserAccountException;
 import za.co.ebank.bank.model.dto.SignUpDto;
 import za.co.ebank.bank.model.persistence.UserAccount;
 
@@ -19,7 +19,7 @@ public class UserAccountServiceTests {
     UserAccountService userAccountService;
 
     @Test
-    public void shouldCreateUserAccount() throws UserExistsException, MessagingException, UnknownHostException {
+    public void shouldCreateUserAccount() throws UserAccountException, MessagingException, UnknownHostException {
         SignUpDto signUpDto = SignUpDto.builder()
                                 .name("John")
                                 .surname("Doe")

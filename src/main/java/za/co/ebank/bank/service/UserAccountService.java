@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import za.co.ebank.bank.builders.MailBuilder;
 import za.co.ebank.bank.exception.PasswordMissmatchException;
-import za.co.ebank.bank.exception.UserExistsException;
+import za.co.ebank.bank.exception.UserAccountException;
 import za.co.ebank.bank.mailer.Email;
 import za.co.ebank.bank.mailer.MailSender;
 import za.co.ebank.bank.model.dto.SignUpDto;
@@ -44,10 +44,10 @@ public class UserAccountService {
         this.mailSender = mailSender;
     }
 
-    public UserAccount createUserAccount(final String loginLink, final SignUpDto signUpDto) throws UserExistsException, MessagingException, UnknownHostException {
+    public UserAccount createUserAccount(final String loginLink, final SignUpDto signUpDto) throws UserAccountException, MessagingException, UnknownHostException {
         //check if user exists
         if (userExist(signUpDto.getEmail())) {
-            throw new UserExistsException("There is already an account with email: " + signUpDto.getEmail());
+            throw new UserAccountException("There is already an account with email: " + signUpDto.getEmail());
         }              
 
         //encrypt password
