@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,7 +57,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("user/signin")
+    @GetMapping("user/signin")
     public ResponseEntity<String> authenticateUser(HttpServletRequest request){
         try {            
             final String authorization = request.getHeader("Authorization");
