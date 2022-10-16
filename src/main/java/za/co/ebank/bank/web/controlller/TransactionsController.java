@@ -12,6 +12,7 @@ import za.co.ebank.bank.model.dto.Deposit;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import za.co.ebank.bank.exception.BankAccountException;
+import za.co.ebank.bank.exception.UserAccountException;
 import za.co.ebank.bank.model.ApiResponse;
 import za.co.ebank.bank.model.dto.TransactionDto;
 
@@ -27,7 +28,7 @@ public class TransactionsController {
     }
     
     @PostMapping("deposit")
-    public ResponseEntity deposit(@RequestBody final Deposit deposit) {
+    public ResponseEntity deposit(@RequestBody final Deposit deposit) throws UserAccountException {
         return new ResponseEntity(transactionService.deposit(deposit), HttpStatus.OK);
     }
     
