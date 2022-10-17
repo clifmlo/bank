@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Transient;
@@ -52,7 +53,7 @@ public class PaymentTransaction implements Serializable {
     @CreationTimestamp
     private LocalDateTime date_received;
     
-    private LocalDateTime date_processed;
+    private LocalDate date_processed;
     
     @UpdateTimestamp
     private LocalDateTime date_updated;
