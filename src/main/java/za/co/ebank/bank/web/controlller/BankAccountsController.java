@@ -4,8 +4,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import za.co.ebank.bank.model.persistence.BankAccount;
 import za.co.ebank.bank.model.dto.CreateBankAccount;
-import za.co.ebank.bank.model.dto.UserBankAccount;
 import za.co.ebank.bank.service.BankAccountService;
 import za.co.ebank.bank.exception.BankAccountException;
 import za.co.ebank.bank.model.ApiResponse;
@@ -60,15 +55,6 @@ public class BankAccountsController {
         
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
-    
-//    @PostMapping("/link-user")
-//    public ResponseEntity linkUser(@RequestBody final UserBankAccount userBankAccount) {
-//        BankAccount bankAccount = bankAccountService.findByAccountNumber(userBankAccount.getAccountNumber());
-//        bankAccount.setUser_account_id(userBankAccount.getUserId());
-//        bankAccountService.updateBankAccount(bankAccount);
-//        
-//        return new ResponseEntity(bankAccount, HttpStatus.OK);            
-//    }
         
     @DeleteMapping("delete/{id}")
     public ResponseEntity createBankAccount(@PathVariable final long id) {
