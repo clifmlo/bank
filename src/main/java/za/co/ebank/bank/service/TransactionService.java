@@ -7,6 +7,7 @@ import za.co.ebank.bank.model.persistence.PaymentTransaction;
 import za.co.ebank.bank.repo.TransactionRepo;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import javax.transaction.Transactional;
 import za.co.ebank.bank.model.persistence.BankAccount;
@@ -77,7 +78,7 @@ public class TransactionService {
             
             transaction.setCreditBalance(creditAccount.getAvailableBalance());
             transaction.setTransactionStatus(TransactionStatus.PROCESSED);
-            transaction.setDate_processed(LocalDateTime.now());             
+            transaction.setDate_processed(LocalDate.now());             
             transactionRepo.save(transaction);
         } else {                       
             transaction.setTransactionStatus(TransactionStatus.PENDING);                        
@@ -126,7 +127,7 @@ public class TransactionService {
                 .creditEntry(deposit.getAmount())
                 .creditBalance(account.getAvailableBalance())
                 .date_received(LocalDateTime.now())
-                .date_processed(LocalDateTime.now())
+                .date_processed(LocalDate.now())
                 .transactionStatus(TransactionStatus.PROCESSED)
                 .reference(deposit.getReference())
                 .build();
@@ -190,7 +191,7 @@ public class TransactionService {
         transaction.setDebitBalance(debitAccount.getAvailableBalance());
         transaction.setCreditBalance(creditAccount.getAvailableBalance());
         transaction.setTransactionStatus(TransactionStatus.PROCESSED);
-        transaction.setDate_processed(LocalDateTime.now()); 
+        transaction.setDate_processed(LocalDate.now()); 
         transaction.setDate_updated(LocalDateTime.now());
         
         bankAccountService.updateBankAccount(debitAccount);
