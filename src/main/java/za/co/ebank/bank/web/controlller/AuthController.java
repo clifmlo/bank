@@ -26,6 +26,8 @@ import za.co.ebank.bank.model.persistence.UserAccount;
 import za.co.ebank.bank.service.UserAccountService;
 import za.co.ebank.bank.exception.PasswordMissmatchException;
 import za.co.ebank.bank.model.dto.PasswordChangeDto;
+import za.co.ebank.bank.model.AuthResponse;
+import za.co.ebank.bank.util.JwtUtil;
 
 /**
  *
@@ -38,6 +40,8 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     private final UserAccountService userAccountService;
+    @Autowired
+    private JwtUtil jwtUtil;
     
     public AuthController(final UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
@@ -70,7 +74,14 @@ public class AuthController {
 
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                return new ResponseEntity(userAccountService.findByEmil(authentication.getName()), HttpStatus.OK);
+                
+                UserAccount user = userAccountService.findByEmil(authentication.getName()).get();
+                final String token = jwtUtil.generateToken(email);
+                AuthResponse response = new AuthResponse();
+                response.setUser(user);
+                response.setToken(token);
+                
+                return new ResponseEntity(response, HttpStatus.OK);
             }
         
         } catch (AuthenticationException ex) {

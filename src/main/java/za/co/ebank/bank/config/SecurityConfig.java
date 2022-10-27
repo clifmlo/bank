@@ -13,8 +13,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import za.co.ebank.bank.service.CustomUserDetailsService;
+
+
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import za.co.ebank.bank.filter.JwtFilter;
 
 /**
  *
@@ -26,12 +30,12 @@ import za.co.ebank.bank.service.CustomUserDetailsService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
+    @Autowired
+    private JwtFilter jwtFilter;
     
     @Override
     protected void configure(HttpSecurity security) throws Exception {
-        security.csrf()                
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
+        security.csrf().disable()               
                 .cors()
                 .and()
                 .authorizeRequests()
@@ -40,7 +44,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();                  
+                .httpBasic()
+                .and().exceptionHandling()
+                .and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                security.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     } 
     
     @Bean

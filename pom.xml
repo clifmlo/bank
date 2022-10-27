@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.3</version>
+		<version>2.7.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>za.co.ebank</groupId>
@@ -85,14 +85,18 @@
                    <version>1.6.0</version>
                 </dependency>
                 <dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity-engine-core</artifactId>
-			<version>2.3</version>
+                    <groupId>org.apache.velocity</groupId>
+                    <artifactId>velocity-engine-core</artifactId>
+                    <version>2.3</version>
+		</dependency>
+                <dependency>
+                    <groupId>io.jsonwebtoken</groupId>
+                    <artifactId>jjwt</artifactId>
+                    <version>0.9.1</version>
 		</dependency>
 	 <dependency>
 	  <groupId>junit</groupId>
 	  <artifactId>junit</artifactId>
-	  <version>4.12</version>
 	  <scope>test</scope>
 	  <type>jar</type>
 	 </dependency>
