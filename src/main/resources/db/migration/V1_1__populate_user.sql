@@ -1,0 +1,2 @@
+INSERT INTO user_account (id, name, surname, id_number, email, contact_number, password, is_active) 
+VALUES ('1', 'John', 'Doe','67957687388082', 'admin@test.com', '0827342314', '$2a$10$z/M4wAlqOtWmQHO5al5zwOSc2T.QL5FhaFzNzc7.QA.rKsE5iZhUe', true)
