@@ -2,6 +2,7 @@ package za.co.ebank.bank.web.controlller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +38,8 @@ public class UserAccountController {
     @GetMapping("all")
     public ResponseEntity findUserAllUsers() {
         List<UserAccount> users = userAccountService.findAll();
-        return new ResponseEntity(users, HttpStatus.OK);
+        List<UserAccount> clients = users.stream().filter(x -> x.getRoles().iterator().next().getName().equalsIgnoreCase("USER")).collect(Collectors.toList());
+        return new ResponseEntity(clients, HttpStatus.OK);
     }
     
     @PostMapping("update")
